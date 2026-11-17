@@ -160,6 +160,43 @@
         .form-group label { font-weight: bold; margin-bottom: 5px; font-size: 13px; color: #444; }
         .form-group input, .form-group select { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
         .readonly-info { font-size: 13px; color: #666; margin-top: 5px; height: 18px; }
+        .fx-formula { font-size: 11px; color: #7a7a7a; line-height: 1.55; margin-top: 5px; }
+        .fx-formula.inline { margin-top: 0; }
+        .fx-group-wide { grid-column: 1 / -1; }
+        .fx-newrow { grid-column: 1; }
+        #sofrInfo { height: auto; line-height: 1.7; }
+        .sofr-live { color: #1565c0; }
+        .fx-inline { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 2px; }
+        .fx-inline input { width: 240px; }
+        .fx-inline .readonly-info { margin-top: 0; height: auto; }
+        .fx-manual { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 7px; font-size: 11.5px; color: #555; }
+        .fx-manual-title { color: #1565c0; }
+        .fx-manual label { display: inline-flex; align-items: center; gap: 3px; }
+        .fx-manual input { width: 62px; padding: 2px 5px; font-size: 11.5px; border: 1px solid #ccc; border-radius: 3px; }
+        .fx-manual button { padding: 2px 8px; font-size: 11.5px; color: #fff; background: #607d8b; border: none; border-radius: 3px; cursor: pointer; }
+        .fx-manual button:hover { background: #455a64; }
+        .fx-channels { font-size: 11px; color: #666; margin-top: 5px; line-height: 1.8; }
+        .fx-channels a { color: #1565c0; text-decoration: none; border-bottom: 1px dotted #1565c0; margin-right: 8px; white-space: nowrap; }
+        .live-fx-link {
+            display: inline-block;
+            margin-top: 6px;
+            font-size: 12.5px;
+            color: #1565c0;
+            text-decoration: none;
+            border-bottom: 1px dashed #1565c0;
+            line-height: 1.5;
+        }
+        .live-fx-link:hover { color: #0d47a1; border-bottom-style: solid; }
+        .live-fx-tip {
+            margin-top: 8px;
+            padding: 7px 10px;
+            background: #e3f2fd;
+            border-left: 3px solid #1565c0;
+            border-radius: 4px;
+            font-size: 12.5px;
+            color: #0d47a1;
+            line-height: 1.6;
+        }
         .btn-calculate {
             grid-column: 1 / -1;
             background-color: var(--primary-color);
@@ -258,7 +295,66 @@
         }
         .rate-lock-box button:hover { background: #003366; }
         .rate-lock-msg { font-size: 13px; }
+        .table-responsive.no-max { max-height: none; }
         .loan-rate-note { font-size: 12px; color: #666; margin: 5px 0 15px 0; }
+
+        /* 国别利率表：实时刷新 UI */
+        .live-rate-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 12px;
+            margin: 8px 0;
+            background: #f1f8e9;
+            border: 1px solid #c5e1a5;
+            border-radius: 5px;
+            font-size: 12.5px;
+            color: #33691e;
+        }
+        .live-rate-bar button {
+            padding: 5px 12px;
+            background: #558b2f;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .live-rate-bar button:hover { background: #33691e; }
+        .live-rate-bar button:disabled { background: #9e9e9e; cursor: not-allowed; }
+        .live-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: #9e9e9e; display: inline-block; flex: 0 0 auto;
+        }
+        .live-dot.on { background: #43a047; box-shadow: 0 0 0 3px rgba(67,160,71,0.18); }
+        .live-dot.warn { background: #f9a825; }
+        .live-dot.spin { background: #1e88e5; animation: pulse 1s infinite; }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+        #liveRateStatus { flex: 1 1 260px; line-height: 1.5; }
+        .live-tag {
+            display: inline-block;
+            margin-left: 4px;
+            padding: 0 5px;
+            font-size: 10px;
+            line-height: 15px;
+            color: #1b5e20;
+            background: #c8e6c9;
+            border-radius: 8px;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+        .data-tag { display: block; margin-top: 3px; font-size: 10.5px; color: #777; white-space: nowrap; }
+        .data-tag.live { color: #2e7d32; }
+        .ref-link { color: #1565c0; text-decoration: none; border-bottom: 1px dotted #1565c0; white-space: nowrap; }
+        .ref-link:hover { color: #0d47a1; border-bottom-style: solid; }
+        td.rate-cell.is-live { background: #e8f5e9; }
+        td.rate-cell.is-live strong { color: #1b5e20; }
+        td.rate-cell.flash { animation: flashBg 1.4s ease-out; }
+        @keyframes flashBg { 0% { background: #fff59d; } 100% { background: #e8f5e9; } }
+        .loan-rate-col-ref { min-width: 190px; text-align: left; }
+        .loan-live-note { font-size: 11.5px; color: #666; margin: 0 0 12px 0; line-height: 1.6; }
 
         .disclaimer {
             margin-top: 30px;
@@ -322,7 +418,7 @@
         </div>
 
         <p>④ 风险的定义：不确定性。除信用风险外，将约定应付款日设为自货物到港日起算，等同于由卖方承担船期延误等迟延交付风险；卖方需按更长信用期限购买信用保险、承担更高的跟单管理成本，订单价格应有效体现该风险对价并确保合理。</p>
-        <p>⑤ 机会成本：向客户提供信用账期时，建议综合考虑我方信用风险管理成本、融资成本、汇率风险及锁汇成本，同时结合进口方融资成本，衡量我方给予信用账期对进口方的价值。下方保费与资金成本测算模块供业务同事参考。</p>
+        <p>⑤ 机会成本：向客户提供信用账期时，建议综合考虑我方信用风险管理成本、融资成本、汇率风险及锁汇成本，同时结合进口方融资成本，衡量我方给予信用账期对进口方的价值。下方保费与资金成本测算模块供业务同事参考。<br><span style="display:inline-block; margin-top:6px; font-size:13px; color:#1565c0; background:#e3f2fd; border-left:3px solid #1565c0; padding:6px 10px; border-radius:4px;">🔗 人民币锁汇成本随市场实时变动，测算前请先到 <a href="https://www.boc.cn/sourcedb/ffx/index.html" target="_blank" rel="noopener noreferrer" style="color:#0d47a1; font-weight:bold;">中国银行远期外汇牌价</a> 实时查看，再填入下方“人民币远期锁汇成本”。</span></p>
     </div>
 
     <!-- 操作排查清单 -->
@@ -436,7 +532,7 @@
 
             <div class="form-group">
                 <label>实际账期天数 (Credit Period Days)</label>
-                <input type="number" id="creditDays" value="90" min="1" max="730">
+                <input type="number" id="creditDays" value="90" min="1" max="730" oninput="updateFxTenor()">
             </div>
 
             <div class="form-group">
@@ -468,22 +564,39 @@
                 <div class="readonly-info">参考信保融资行情（如2%-4%）</div>
             </div>
 
-            <div class="form-group">
-                <label>人民币远期锁汇成本 (CNY)</label>
-                <input type="text" id="fxHedgeCost" value="5,000" oninput="formatNumber(this)">
-                <div class="readonly-info" id="fxHedgeInfo">即期: 6.7191 / 90天远期: 6.6203</div>
-            </div>
 
-            <div class="form-group">
-                <label>美元融资成本参考 (SOFR) %</label>
+
+            <div class="form-group fx-newrow">
+                <label>美元融资成本参考 (SOFR + 300bp) %</label>
                 <input type="number" id="sofrRate" value="7.00" step="0.01">
-                <div class="readonly-info">用于计算买方机会成本（如SOFR+300bp计算）</div>
+                <div class="readonly-info" id="sofrInfo">实时 SOFR + 300bp 计算中…<a href="javascript:void(0)" class="live-fx-link" onclick="refreshSofr(true)">↻</a></div>
             </div>
 
             <div class="form-group">
                 <label>买方本地币融资成本 %</label>
                 <input type="number" id="localRate" value="20.00" step="0.1">
                 <div class="readonly-info" id="localRateInfo">用于对比买方本地融资成本</div>
+            </div>
+
+            <!-- 人民币远期锁汇成本：整行展示 -->
+            <div class="form-group fx-group-wide">
+                <label>人民币远期锁汇成本 (CNY)</label>
+                <div class="fx-inline">
+                    <input type="text" id="fxHedgeCost" value="5,000" oninput="formatNumber(this)" onblur="autoCalcHedgeCost()">
+                    <div class="readonly-info" id="fxHedgeInfo">即期、三个月远期待填写（中行牌价页抄“现汇买入价 / 买入价”）</div>
+                </div>
+                <div class="fx-manual">
+                    <span class="fx-manual-title">手动牌价：</span>
+                    <label>即期<input type="text" id="fxSpotManual" placeholder="6.6544" oninput="onManualFxInput()"></label>
+                    <label><span id="fxTenorLabel">90天远期（三个月）</span><input type="text" id="fxFwdManual" placeholder="6.5994" oninput="onManualFxInput()"></label>
+                    <span class="fx-formula" id="fxManualMsg">当前账期 90 天，请到远期牌价页选“三个月”的买入价。</span>
+                </div>
+                <div class="fx-channels">
+                    <span>中国银行牌价查询：</span>
+                    <a href="https://www.boc.cn/sourcedb/whpj/" target="_blank" rel="noopener noreferrer">即期外汇牌价（取 美元行·现汇买入价）</a>
+                    <a href="https://www.boc.cn/sourcedb/ffx/index.html" target="_blank" rel="noopener noreferrer"><span id="fxFwdLinkText">远期外汇牌价（取 美元·三个月·买入价）</span></a>
+                </div>
+                <div class="fx-formula">口径：锁汇成本 =（即期 − 对应期限远期）× 美元金额，远期升水按 0 计。中行牌价按“元/100 美元”展示，抄 665.44 或 6.6544 都可以，会自动换算。</div>
             </div>
 
             <button class="btn-calculate" onclick="calculate()">立即测算 / Calculate</button>
@@ -510,6 +623,10 @@
                     <div class="row">
                         <span>远期锁汇成本:</span>
                         <span id="resFxCost">¥0.00</span>
+                    </div>
+                    <div style="font-size:11.5px; color:#1565c0; margin-top:2px; line-height:1.5;">
+                        ⚠️ 锁汇成本随市场实时波动，测算前请
+                        <a href="https://www.boc.cn/sourcedb/ffx/index.html" target="_blank" rel="noopener noreferrer" style="color:#1565c0;">点此查看最新远期牌价</a>
                     </div>
                     <div class="row total-row">
                         <span>综合资金成本(USD):</span>
@@ -586,7 +703,14 @@
         </div>
 
         <h3>📚 参考资料三：国别（本币）中小企业名义贷款利率参考</h3>
-        <div class="table-responsive">
+
+        <div class="live-rate-bar">
+            <span class="live-dot" id="liveRateDot"></span>
+            <span id="liveRateStatus">正在尝试获取实时基准利率…</span>
+            <button type="button" id="liveRateBtn" onclick="refreshLiveRates()">立即刷新</button>
+        </div>
+
+        <div class="table-responsive no-max">
             <table>
                 <thead>
                     <tr>
@@ -594,14 +718,19 @@
                         <th>中小企业名义贷款利率</th>
                         <th>基准利率</th>
                         <th>CPI</th>
-                        <th>实际利率</th>
+                        <th style="white-space:nowrap;">实际利率</th>
                         <th>负担备注</th>
+                        <th class="loan-rate-col-ref">参考链接 / 数据来源<br><span style="font-weight:normal; font-size:11px;">点击查看实时官方数据</span></th>
                     </tr>
                 </thead>
                 <tbody id="loanRateTableBody"></tbody>
             </table>
         </div>
         <p class="loan-rate-note">说明：测算器中“买方本地币融资成本”会按所选国别自动匹配上表数据；未列明国别可手动输入。选择 TUR 时自动取土耳其中小企业名义贷款利率 41.9%。</p>
+        <p class="loan-live-note" id="loanLiveNote">
+            ⓘ 实时取数说明：页面每次打开/刷新会自动请求公开官方接口，更新美国（纽约联储 SOFR/EFFR）、巴西（央行 Selic）、中国香港（金管局 1M HIBOR 与基准利率）的基准利率，并按“基准利率 + 小企业利差”重算名义利率与实际利率；标 🟢 的行即本次实时更新值。<br>
+            ⓘ 其余国别暂无免密钥的公开实时接口，表中为内置快照，请点击右侧“参考链接”到央行/统计机构官网核对最新数据；CPI 亦为最新公布快照，实时刷新不覆盖 CPI。
+        </p>
     </div>
 
     <!-- 免责声明 -->
@@ -698,25 +827,214 @@
         { code: 'CHN', name: '中国', cat: 'B2' }
     ];
 
+    /* ---------- 国别利率表：数据 + 实时取数 ---------- */
+    function fmtSignedPct(v) {
+        const sign = v < 0 ? '−' : '+';
+        return sign + Math.abs(v).toFixed(2) + '%';
+    }
+
+    // benchmark = 用作利差锚的基准利率（数值）；rate = benchmark + spread
     const loanRateData = [
-        { code: 'CHN', country: '中国（CNY）', rate: 3.00, policy: '1Y LPR 3.00%（政策利率 1.40%）', cpi: '0.7%', real: '+2.30%', note: '低名义、低通胀，实际温和为正，全球最低梯队' },
-        { code: 'USA', country: '美国（USD）', rate: 6.91, policy: 'FFR 3.75–4.00%；SOFR 3.91%', cpi: '3.70%', real: '+3.21%', note: '名义中高、实际为正偏紧，小企业利差约 300bp' },
-        { code: 'BRA', country: '巴西（BRL）', rate: 32.4, policy: 'Selic 13.75%', cpi: '4.63%', real: '+27.77%', note: '超高名义、极高实际，信贷成本全球最高梯队' },
-        { code: 'ROU', country: '罗马尼亚（RON）', rate: 8.62, policy: '政策利率 6.50%（Lombard 7.50%）', cpi: '6.94%', real: '+1.68%', note: '名义偏高、实际微正，通胀基本侵蚀利率' },
-        { code: 'GBR', country: '英国（GBP）', rate: 6.55, policy: 'Bank Rate 4.00%', cpi: '3.5%', real: '+3.05%', note: '名义中高、实际为正，能源通胀下环境偏紧' },
-        { code: 'ESP', country: '西班牙（EUR）', rate: 3.90, policy: 'ECB 存款便利 2.90%；3M Euribor 2.738%', cpi: '4.9%', real: '−1.00%', note: '名义中性但通胀更高，实际利率为负' },
-        { code: 'DEU', country: '德国（EUR）', rate: 3.90, policy: 'ECB 存款便利 2.90%；3M Euribor 2.738%', cpi: '2.8%', real: '+1.10%', note: '名义中性、实际小幅为正，成本相对温和' },
-        { code: 'RUS', country: '俄罗斯（RUB）', rate: 17.9, policy: '关键利率 14.00%', cpi: '6.4%', real: '+11.50%', note: '高名义、高实际，紧缩下融资显著偏贵' },
-        { code: 'AUS', country: '澳大利亚（AUD）', rate: 7.38, policy: 'Cash Rate 4.85%', cpi: '3.9%', real: '+3.48%', note: '名义偏高、实际为正，处近 18 年高位附近' },
-        { code: 'HKG', country: '中国香港（HKD）', rate: 5.20, policy: '1M HIBOR 2.68%+250bp；P 5.00%', cpi: '1.9%', real: '+3.30%', note: '跟随美元，名义中高、实际为正，本地低通胀' },
-        { code: 'MEX', country: '墨西哥（MXN）', rate: 17.0, policy: 'Banxico 6.25%；TIIE28 6.51%', cpi: '3.75%', real: '+13.25%', note: '政策利率中性，但小企业利差极厚，负担偏高' },
-        { code: 'TUR', country: '土耳其（TRY）', rate: 41.9, policy: '一周回购 36.0%', cpi: '29.73%', real: '+12.17%', note: '超高名义、高通胀，实际仍为正；里拉贬值加重偿债压力' }
+        { code: 'CHN', country: '中国（CNY）', rate: 3.00, benchmark: 3.00,
+          policy: '1Y LPR 3.00%（政策利率 1.40%）', cpi: '0.7%',
+          note: '低名义、低通胀，实际温和为正，全球最低梯队',
+          link: 'https://www.chinamoney.com.cn/chinese/bklpr/', source: '中国货币网 · LPR' },
+        { code: 'USA', country: '美国（USD）', rate: 6.91, benchmark: 3.91, liveSource: 'USA',
+          policy: 'FFR 3.75–4.00%；SOFR 3.91%', cpi: '3.70%',
+          note: '名义中高、实际为正偏紧，小企业利差约 300bp',
+          link: 'https://www.newyorkfed.org/markets/reference-rates/sofr', source: '纽约联储 · SOFR / EFFR' },
+        { code: 'BRA', country: '巴西（BRL）', rate: 32.40, benchmark: 13.75, liveSource: 'BRA',
+          policy: 'Selic 13.75%', cpi: '4.63%',
+          note: '超高名义、极高实际，信贷成本全球最高梯队',
+          link: 'https://www.bcb.gov.br/controleinflacao/taxaselic', source: '巴西央行 · Selic' },
+        { code: 'ROU', country: '罗马尼亚（RON）', rate: 8.62, benchmark: 6.50,
+          policy: '政策利率 6.50%（Lombard 7.50%）', cpi: '6.94%',
+          note: '名义偏高、实际微正，通胀基本侵蚀利率',
+          link: 'https://www.bnr.ro/Monetary-Policy-3317.aspx', source: '罗马尼亚央行 · 政策利率' },
+        { code: 'GBR', country: '英国（GBP）', rate: 6.55, benchmark: 4.00,
+          policy: 'Bank Rate 4.00%', cpi: '3.5%',
+          note: '名义中高、实际为正，能源通胀下环境偏紧',
+          link: 'https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate', source: '英格兰银行 · Bank Rate' },
+        { code: 'ESP', country: '西班牙（EUR）', rate: 3.90, benchmark: 2.90,
+          policy: 'ECB 存款便利 2.90%；3M Euribor 2.738%', cpi: '4.9%',
+          note: '名义中性但通胀更高，实际利率为负',
+          link: 'https://www.ecb.europa.eu/stats/policy_and_exchange_rates/key_ecb_interest_rates/html/index.en.html', source: '欧洲央行 · 关键利率' },
+        { code: 'DEU', country: '德国（EUR）', rate: 3.90, benchmark: 2.90,
+          policy: 'ECB 存款便利 2.90%；3M Euribor 2.738%', cpi: '2.8%',
+          note: '名义中性、实际小幅为正，成本相对温和',
+          link: 'https://www.ecb.europa.eu/stats/policy_and_exchange_rates/key_ecb_interest_rates/html/index.en.html', source: '欧洲央行 · 关键利率' },
+        { code: 'RUS', country: '俄罗斯（RUB）', rate: 17.90, benchmark: 14.00,
+          policy: '关键利率 14.00%', cpi: '6.4%',
+          note: '高名义、高实际，紧缩下融资显著偏贵',
+          link: 'https://www.cbr.ru/eng/hd_base/KeyRate/', source: '俄罗斯央行 · 关键利率' },
+        { code: 'AUS', country: '澳大利亚（AUD）', rate: 7.38, benchmark: 4.85,
+          policy: 'Cash Rate 4.85%', cpi: '3.9%',
+          note: '名义偏高、实际为正，处近 18 年高位附近',
+          link: 'https://www.rba.gov.au/statistics/cash-rate/', source: '澳洲联储 · Cash Rate' },
+        { code: 'HKG', country: '中国香港（HKD）', rate: 5.20, benchmark: 2.68, liveSource: 'HKG',
+          policy: '1M HIBOR 2.68%+250bp；P 5.00%', cpi: '1.9%',
+          note: '跟随美元，名义中高、实际为正，本地低通胀',
+          link: 'https://www.hkma.gov.hk/eng/data-publications-and-research/data-and-statistics/', source: '香港金管局 · HIBOR / 基准利率' },
+        { code: 'MEX', country: '墨西哥（MXN）', rate: 17.00, benchmark: 6.25,
+          policy: 'Banxico 6.25%；TIIE28 6.51%', cpi: '3.75%',
+          note: '政策利率中性，但小企业利差极厚，负担偏高',
+          link: 'https://www.banxico.org.mx/', source: '墨西哥央行 · Banxico' },
+        { code: 'TUR', country: '土耳其（TRY）', rate: 41.90, benchmark: 36.00,
+          policy: '一周回购 36.0%', cpi: '29.73%',
+          note: '超高名义、高通胀，实际仍为正；里拉贬值加重偿债压力',
+          link: 'https://www.tcmb.gov.tr/wps/wcm/connect/EN/TCMB+EN/Main+Menu/Core+Functions/Monetary+Policy/Policy+Rate', source: '土耳其央行 · 政策利率' }
     ];
+
+    // 初始化派生字段（CPI 数值、实际利率、小企业利差）
+    loanRateData.forEach(item => {
+        item.cpiNum = parseFloat(String(item.cpi).replace(/[^0-9.\-]/g, '')) || 0;
+        item.spread = item.rate - item.benchmark;
+        item.realNum = item.rate - item.cpiNum;
+        item.real = fmtSignedPct(item.realNum);
+        item.live = false;
+        item.updatedAt = '';
+        item.asOf = '';
+    });
+
+    // 官方公开接口（均支持浏览器跨域 CORS）
+    async function fetchJSON(url, timeoutMs) {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), timeoutMs || 9000);
+        try {
+            const res = await fetch(url, { signal: ctrl.signal, cache: 'no-store' });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return await res.json();
+        } finally {
+            clearTimeout(timer);
+        }
+    }
+
+    // 美元融资成本参考 = 实时 SOFR + 300bp（纽约联储官方接口，CORS 开放）
+    async function refreshSofr(manual) {
+        const info = document.getElementById('sofrInfo');
+        const inp = document.getElementById('sofrRate');
+        if (!info || !inp) return;
+        try {
+            const d = await fetchJSON('https://markets.newyorkfed.org/api/rates/secured/sofr/last/1.json', 8000);
+            const r = (d.refRates && d.refRates[0]) || null;
+            const sofr = Number(r && r.percentRate);
+            if (!isFinite(sofr) || sofr <= 0) throw new Error('bad value');
+            const val = sofr + 3.0;
+            inp.value = val.toFixed(2);
+            const t = new Date().toLocaleTimeString('zh-CN', { hour12: false });
+            const mmdd = String(r.effectiveDate || '').slice(5);
+            info.innerHTML = `SOFR ${sofr.toFixed(2)}%（${mmdd}） + 300bp = <strong class="sofr-live">${val.toFixed(2)}%</strong> <span style="color:#aaa;margin:0 4px 0 2px">${t.slice(0,5)}</span>`
+                + `<a href="javascript:void(0)" class="live-fx-link" onclick="refreshSofr(true)">↻</a>`;
+            info.dataset.hasLive = '1';
+            const res = document.getElementById('results');
+            if (res && res.style.display !== 'none') calculate();
+        } catch (e) {
+            info.innerHTML = (info.dataset.hasLive ? '实时刷新失败，沿用上次值，可手填' : '暂未取到实时值，可按 SOFR+300bp 手填')
+                + `<a href="javascript:void(0)" class="live-fx-link" onclick="refreshSofr(true)">↻</a>`;
+        }
+    }
+
+    const LIVE_SOURCES = {
+        USA: async (item) => {
+            const [sofr, effr] = await Promise.all([
+                fetchJSON('https://markets.newyorkfed.org/api/rates/secured/sofr/last/1.json'),
+                fetchJSON('https://markets.newyorkfed.org/api/rates/unsecured/effr/last/1.json')
+            ]);
+            const s = sofr.refRates[0];
+            const e = (effr.refRates && effr.refRates[0]) || null;
+            const ffrText = e && isFinite(e.targetRateFrom) && isFinite(e.targetRateTo)
+                ? `FFR ${e.targetRateFrom.toFixed(2)}–${e.targetRateTo.toFixed(2)}%（EFFR ${Number(e.percentRate).toFixed(2)}%）；`
+                : '';
+            return {
+                benchmark: Number(s.percentRate),
+                policy: `${ffrText}SOFR ${Number(s.percentRate).toFixed(2)}%（小企业利差约 ${Math.round(item.spread * 100)}bp）`,
+                asOf: s.effectiveDate
+            };
+        },
+        BRA: async () => {
+            const d = await fetchJSON('https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados/ultimos/1?formato=json');
+            if (!d || !d.length) throw new Error('empty');
+            const v = Number(d[0].valor);
+            if (!isFinite(v)) throw new Error('bad value');
+            return { benchmark: v, policy: `Selic ${v.toFixed(2)}%`, asOf: d[0].data };
+        },
+        HKG: async (item) => {
+            const d = await fetchJSON('https://api.hkma.gov.hk/public/market-data-and-statistics/daily-monetary-statistics/daily-figures-interbank-liquidity');
+            const r = d.result.records[0];
+            const hibor = Number(r.hibor_fixing_1m);
+            const base = Number(r.disc_win_base_rate);
+            if (!isFinite(hibor)) throw new Error('bad hibor');
+            return {
+                benchmark: hibor,
+                policy: `1M HIBOR ${hibor.toFixed(2)}%+${Math.round(item.spread * 100)}bp（小企业利差）；基准利率 ${isFinite(base) ? base.toFixed(2) + '%' : '—'}；P 5.00%`,
+                asOf: r.end_of_date
+            };
+        }
+    };
 
     const loanRateByCode = loanRateData.reduce((acc, item) => {
         acc[item.code] = item;
         return acc;
     }, {});
+
+    let liveRefreshing = false;
+    async function refreshLiveRates() {
+        if (liveRefreshing) return;
+        liveRefreshing = true;
+
+        const btn = document.getElementById('liveRateBtn');
+        const dot = document.getElementById('liveRateDot');
+        const status = document.getElementById('liveRateStatus');
+        if (btn) { btn.disabled = true; btn.textContent = '获取中…'; }
+        if (dot) dot.className = 'live-dot spin';
+        if (status) status.textContent = '正在从官方接口获取实时基准利率（美国 SOFR/FFR、巴西 Selic、香港 HIBOR）…';
+
+        const targets = loanRateData.filter(i => i.liveSource);
+        const results = await Promise.allSettled(
+            targets.map(i => LIVE_SOURCES[i.liveSource](i))
+        );
+
+        const stamp = new Date().toLocaleTimeString('zh-CN', { hour12: false });
+        const okList = [];
+        const flash = [];
+
+        results.forEach((r, idx) => {
+            const item = targets[idx];
+            if (r.status === 'fulfilled' && r.value && isFinite(r.value.benchmark) && r.value.benchmark > 0) {
+                item.live = true;
+                item.benchmark = r.value.benchmark;
+                item.rate = item.benchmark + item.spread;
+                item.policy = r.value.policy || item.policy;
+                item.asOf = r.value.asOf || '';
+                item.updatedAt = stamp;
+                item.realNum = item.rate - item.cpiNum;
+                item.real = fmtSignedPct(item.realNum);
+                okList.push(item.country);
+                flash.push(item.code);
+            } else {
+                item.live = false;
+                item.updatedAt = '';
+                item.asOf = '';
+            }
+        });
+
+        renderLoanRateTable(flash);
+
+        if (dot) dot.className = 'live-dot ' + (okList.length ? 'on' : 'warn');
+        if (status) {
+            status.textContent = okList.length
+                ? `✅ 已实时更新 ${okList.length} 项：${okList.join('、')}（刷新时间 ${stamp}）；名义利率已按“实时基准 + 小企业利差”重算。其余国别为静态快照，请点“参考链接”核对。`
+                : `⚠️ 实时接口暂不可用（可能受网络或浏览器跨域限制），当前显示内置静态参考值；请点击各行“参考链接”查看最新官方数据。`;
+        }
+        if (btn) { btn.disabled = false; btn.textContent = '立即刷新'; }
+        liveRefreshing = false;
+
+        // 若当前已选中被实时更新的国别，同步刷新“买方本地币融资成本”
+        const code = (document.getElementById('countryCode') || {}).value;
+        if (code && loanRateByCode[code] && loanRateByCode[code].live) {
+            onCountryChange();
+        }
+    }
 
     const rateTable = {
         LC: [
@@ -758,6 +1076,10 @@
         renderRateTable();
         renderCountryTable();
         renderLoanRateTable();
+        refreshLiveRates();   // 每次打开/刷新页面自动取实时基准利率
+        refreshSofr();        // 美元融资成本参考 = 实时 SOFR + 300bp
+        updateFxTenor();      // 按账期天数匹配中行远期档位（3M/4M…）
+        initManualFx();       // 载入本机保存的手动牌价并折算
         toggleFinancing();
         bindChecklistValidation();
 
@@ -944,14 +1266,120 @@
         input.value = parseFloat(val).toLocaleString('en-US');
     }
 
-    function autoCalcHedgeCost() {
-        const amountStr = document.getElementById('creditAmount').value.replace(/,/g, '');
-        const amount = parseFloat(amountStr);
-        if (!isNaN(amount)) {
-            const costCNY = (amount / 10000) * 500;
-            const fxInput = document.getElementById('fxHedgeCost');
-            fxInput.value = costCNY.toLocaleString('en-US', {maximumFractionDigits: 0});
+    /* ---------- 锁汇成本：手动牌价即时折算 ---------- */
+    const FX_MANUAL_KEY = 'fxManualQuote_v1';
+    let fxManualQuote = null;   // { spotBuy, fwdBuy }
+
+    // 中国银行远期牌价期限档位：一周、一个月…一年（最长一年）
+    const TENOR_LABELS = ['', '一个月', '二个月', '三个月', '四个月', '五个月', '六个月', '七个月', '八个月', '九个月', '十个月', '十一个月', '一年'];
+    let fxTenor = { label: '三个月', days: 90, capped: false, week: false };
+
+    function tenorForDays(days) {
+        if (!isFinite(days) || days <= 0) days = 90;
+        if (days <= 10) return { label: '一周', days: days, capped: false, week: true };
+        let m = Math.round(days / 30);
+        if (m < 1) m = 1;
+        if (m > 12) return { label: '一年', days: days, capped: true, week: false };
+        return { label: TENOR_LABELS[m], days: days, capped: false, week: false };
+    }
+
+    function updateFxTenor() {
+        const days = parseFloat((document.getElementById('creditDays') || {}).value) || 90;
+        const t = tenorForDays(days);
+        fxTenor = t;
+
+        const lbl = document.getElementById('fxTenorLabel');
+        if (lbl) lbl.textContent = `${days}天远期（${t.label}）`;
+
+        const linkText = document.getElementById('fxFwdLinkText');
+        if (linkText) linkText.textContent = `远期外汇牌价（取 美元·${t.label}·买入价）`;
+
+        const msg = document.getElementById('fxManualMsg');
+        if (msg) {
+            if (!fxManualQuote) {
+                msg.style.color = t.capped ? '#e65100' : '#7a7a7a';
+                msg.textContent = t.capped
+                    ? `⚠️ 账期 ${days} 天超过一年，中行远期最长只报“一年”，请按一年期买入价填。`
+                    : `当前账期 ${days} 天，请到远期牌价页选“${t.label}”的买入价。`;
+            } else {
+                msg.style.color = '#e65100';
+                msg.textContent = `账期已改为 ${days} 天，请确认填入的是“${t.label}”买入价（当前远期为 ${fxManualQuote.fwdBuy}）。`;
+            }
         }
+        updateFxInfoLine();
+        return t;
+    }
+
+    function loadManualFx() {
+        try { const s = localStorage.getItem(FX_MANUAL_KEY); return s ? JSON.parse(s) : null; } catch (e) { return null; }
+    }
+
+    function updateFxInfoLine() {
+        const el = document.getElementById('fxHedgeInfo');
+        if (!el) return;
+        if (fxManualQuote) {
+            el.textContent = `手动牌价：即期 ${fxManualQuote.spotBuy.toFixed(4)} / ${fxTenor.days}天远期（${fxTenor.label}）${fxManualQuote.fwdBuy.toFixed(4)}`;
+        } else {
+            el.textContent = `即期、${fxTenor.label}远期待填写（中行牌价页抄“现汇买入价 / 买入价”）`;
+        }
+    }
+
+    function onManualFxInput() {
+        const s = parseFloat((document.getElementById('fxSpotManual') || {}).value);
+        const f = parseFloat((document.getElementById('fxFwdManual') || {}).value);
+        const msg = document.getElementById('fxManualMsg');
+        if (!isFinite(s) || !isFinite(f) || s <= 0 || f <= 0) {
+            fxManualQuote = null;
+            updateFxInfoLine();
+            if (msg) { msg.style.color = '#7a7a7a'; msg.textContent = `即期、${fxTenor.label}远期两项都填好后自动折算（例：6.6544 / 6.5994）。`; }
+            return;
+        }
+        // 中行页面按“元/100 美元”展示，数值大于 20 时按每百美元自动除以 100
+        const sNorm = s > 20 ? s / 100 : s;
+        const fNorm = f > 20 ? f / 100 : f;
+        fxManualQuote = { spotBuy: sNorm, fwdBuy: fNorm };
+        try { localStorage.setItem(FX_MANUAL_KEY, JSON.stringify(fxManualQuote)); } catch (e) { }
+        updateFxInfoLine();
+        const applied = autoCalcHedgeCost();
+        if (msg) {
+            const diff = sNorm - fNorm;
+            if (diff > 0) {
+                msg.style.color = '#2e7d32';
+                msg.textContent = `✅ 按${fxTenor.label}远期，价差 ${diff.toFixed(4)}，已折算填入${applied == null ? '' : ' ¥' + applied.toLocaleString('en-US')}。`;
+            } else {
+                msg.style.color = '#2e7d32';
+                msg.textContent = `✅ 远期升水 ${Math.abs(diff).toFixed(4)}，锁汇无成本，已按 0 填入。`;
+            }
+        }
+    }
+
+    function initManualFx() {
+        const m = loadManualFx();
+        if (m && isFinite(m.spotBuy) && isFinite(m.fwdBuy)) {
+            fxManualQuote = { spotBuy: m.spotBuy, fwdBuy: m.fwdBuy };
+            const s = document.getElementById('fxSpotManual');
+            const f = document.getElementById('fxFwdManual');
+            if (s) s.value = m.spotBuy;
+            if (f) f.value = m.fwdBuy;
+            updateFxInfoLine();
+            autoCalcHedgeCost();
+        }
+    }
+
+    function autoCalcHedgeCost() {
+        const amountStr = (document.getElementById('creditAmount').value || '').replace(/,/g, '');
+        const amount = parseFloat(amountStr);
+        if (!isFinite(amount) || amount <= 0) return null;
+
+        let costCNY;
+        if (fxManualQuote) {
+            costCNY = Math.max(0, (fxManualQuote.spotBuy - fxManualQuote.fwdBuy) * amount);
+        } else {
+            costCNY = amount * 0.05;   // 未填手动牌价时，沿用 500 元/万美元 的估算口径
+        }
+        const rounded = Math.round(costCNY);
+        document.getElementById('fxHedgeCost').value = rounded.toLocaleString('en-US');
+        return rounded;
     }
 
     function previewImage(input) {
@@ -1220,17 +1648,28 @@
         tbody.innerHTML = html;
     }
 
-    function renderLoanRateTable() {
+    function renderLoanRateTable(flashCodes) {
         const tbody = document.getElementById('loanRateTableBody');
+        const flash = new Set(flashCodes || []);
         let html = '';
         loanRateData.forEach(item => {
+            const isLive = item.live;
+            const rateCellCls = 'rate-cell' + (isLive ? ' is-live' : '') + (flash.has(item.code) ? ' flash' : '');
+            const tagHtml = isLive ? '<span class="live-tag">实时</span>' : '';
+            const dataTagHtml = isLive
+                ? `<span class="data-tag live">🟢 实时 ${item.updatedAt}${item.asOf ? '（源日期 ' + item.asOf + '）' : ''}</span>`
+                : '<span class="data-tag">⚪ 静态快照</span>';
             html += `<tr>
                 <td>${item.country}</td>
-                <td><strong>${item.rate.toFixed(2)}%</strong></td>
-                <td>${item.policy}</td>
+                <td class="${rateCellCls}" style="white-space:nowrap;"><strong>${item.rate.toFixed(2)}%</strong>${tagHtml}</td>
+                <td style="text-align:left;">${item.policy}</td>
                 <td>${item.cpi}</td>
                 <td>${item.real}</td>
                 <td style="text-align:left;">${item.note}</td>
+                <td class="loan-rate-col-ref">
+                    <a class="ref-link" href="${item.link}" target="_blank" rel="noopener noreferrer">${item.source} ↗</a>
+                    ${dataTagHtml}
+                </td>
             </tr>`;
         });
         tbody.innerHTML = html;
