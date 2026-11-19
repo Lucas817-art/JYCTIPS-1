@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -377,6 +377,23 @@
         @media (max-width: 600px) {
             .form-grid, .results-grid { grid-template-columns: 1fr; }
         }
+        /* 凭提单副本付款（副本发出后 N 日内）风险时点判定模块 */
+        .bl-copy-card h3 { margin-top: 0; color: var(--primary-color); font-size: 18px; }
+        .bl-copy-intro { font-size: 13.5px; color: #555; background: #f4f7f9; border-left: 3px solid var(--primary-color); padding: 8px 12px; border-radius: 4px; line-height: 1.7; margin: 8px 0 14px 0; }
+        .bl-hint { font-size: 13.5px; color: #666; margin-top: 12px; padding-left: 2px; }
+        .bl-kv { display: flex; flex-wrap: wrap; gap: 6px 20px; margin-top: 12px; font-size: 13.5px; color: #333; }
+        .bl-kv b { color: var(--primary-color); }
+        .bl-conclusion { margin-top: 14px; padding: 12px 14px; border-radius: 6px; font-size: 14.5px; font-weight: bold; line-height: 1.75; }
+        .bl-conclusion.reject { background: #fff3e0; border-left: 5px solid #e65100; color: #bf4b00; }
+        .bl-conclusion.default { background: #fdecea; border-left: 5px solid var(--danger-color); color: var(--danger-color); }
+        .bl-path { margin-top: 10px; border: 1px solid #e0e0e0; border-radius: 6px; padding: 10px 12px; font-size: 13.5px; line-height: 1.8; color: #333; }
+        .bl-path.active { border-color: var(--danger-color); background: #fffafa; }
+        .bl-path.muted { opacity: .6; }
+        .bl-path h5 { margin: 0 0 4px 0; font-size: 14px; color: #333; }
+        .bl-date { font-weight: bold; color: var(--danger-color); text-decoration: underline; }
+        .bl-small { font-size: 12.5px; color: #7a7a7a; }
+        .bl-extra { margin-top: 10px; font-size: 13px; color: #555; background: #fff8e1; border-left: 3px solid #ffc107; padding: 8px 10px; border-radius: 4px; line-height: 1.7; }
+        .bl-copy-disclaimer { margin-top: 12px; font-size: 12px; color: #8a6d3b; background: #fff8e1; border-left: 3px solid #ffc107; padding: 8px 10px; border-radius: 4px; line-height: 1.65; }
     </style>
 </head>
 <body>
@@ -505,6 +522,39 @@
             <div class="preview-container" id="imagePreviewContainer">
                 <img id="imagePreview" src="" alt="截图预览">
             </div>
+        </div>
+    </div>
+
+    <!-- ===== 模块：凭提单副本付款（副本发出后 N 日内）风险时点判定 ===== -->
+    <div class="calculator-card bl-copy-card">
+        <h3>🚢 凭提单副本付款（副本发出后 N 日内）风险时点判定</h3>
+        <p class="bl-copy-intro">
+            适用场景：合同约定部分预付款，尾款凭提单副本付款、并按 OA 5 天投保。判定原则：把「实际到港日」和「应付款日＋30 天（拖欠风险成立日）」两个时点比一比，<strong>哪个先到就按哪个风险算</strong> —— 到港在先、买方未付款赎单 → 按拒收风险走（报损 10 个工作日）；拖欠成立在先 → 按拖欠风险走（报损 30 日）。两条路径都还要在报损后 4 个月内提交索赔。
+        </p>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label>① 装船日期（提单装船日）</label>
+                <input type="date" id="blShipDate" onchange="calcBlCopyRisk()">
+            </div>
+            <div class="form-group">
+                <label>② 发送提单副本之日</label>
+                <input type="date" id="blCopyDate" onchange="calcBlCopyRisk()">
+            </div>
+            <div class="form-group">
+                <label>③ 信用期限（自发送副本日起，天）</label>
+                <input type="number" id="blCreditDays" value="5" min="1" max="365" oninput="calcBlCopyRisk()">
+            </div>
+            <div class="form-group">
+                <label>④ 船舶预计到港日（ETA）</label>
+                <input type="date" id="blEtaDate" onchange="calcBlCopyRisk()">
+            </div>
+        </div>
+
+        <div id="blCopyResult"><div class="bl-hint">填写四项输入后自动判定风险路径与截止日。</div></div>
+
+        <div class="bl-copy-disclaimer">
+            <strong>免责声明：</strong>本模块仅按《短期出口信用保险综合保险（4.0 版）》条款第八条、第十条、第三十一条的时限规则做日期演算，风险类型最终定性、索赔材料要求及是否受理，均以理赔人员的意见和保单条款为准，仅供内部参考，不构成对理赔结果的承诺。工作日计算已跳过周六、周日，<strong>法定节假日与调休请人工核对</strong>。
         </div>
     </div>
 
@@ -1514,6 +1564,103 @@
         }
     }
 
+    function addMonths(date, months) {
+        const d = new Date(date);
+        const day = d.getDate();
+        d.setMonth(d.getMonth() + months);
+        if (d.getDate() < day) d.setDate(0);   // 处理 8-31 加月后溢出
+        return d;
+    }
+
+    // 加上 n 个工作日（跳过周六、周日；法定节假日需人工核对）
+    function addWorkdays(date, n) {
+        const d = new Date(date);
+        let added = 0;
+        while (added < n) {
+            d.setDate(d.getDate() + 1);
+            const w = d.getDay();
+            if (w !== 0 && w !== 6) added++;
+        }
+        return d;
+    }
+
+    /* ---------- 凭提单副本付款：拒收 / 拖欠两条路径的时点判定 ---------- */
+    function daysBetweenStr(fromStr, toStr) {
+        return Math.round((new Date(toStr) - new Date(fromStr)) / 86400000);
+    }
+
+    function calcBlCopyRisk() {
+        const ship = document.getElementById('blShipDate').value;
+        const copy = document.getElementById('blCopyDate').value;
+        const daysRaw = document.getElementById('blCreditDays').value;
+        const eta = document.getElementById('blEtaDate').value;
+        const box = document.getElementById('blCopyResult');
+        if (!box) return;
+
+        const days = parseInt(daysRaw, 10);
+        if (!ship || !copy || !eta || !isFinite(days) || days <= 0) {
+            box.innerHTML = '<div class="bl-hint">填写四项输入后自动判定；信用期限默认 5 天（自发送提单副本之日起算）。</div>';
+            return;
+        }
+
+        // 应付款日 = 发送提单副本之日 + 信用期限
+        const due = formatDate(addDays(copy, days));
+        const oaFromShip = daysBetweenStr(ship, due);
+
+        // 路径 A：拒收——风险发生日按实际到港日；报损 10 个工作日内；索赔 4 个月
+        const rejectRisk = eta;
+        const rejectReport = formatDate(addWorkdays(eta, 10));
+        const rejectClaim = formatDate(addMonths(addWorkdays(eta, 10), 4));
+
+        // 路径 B：拖欠——应付款日＋30 天成立；报损 30 日内；索赔 4 个月
+        const defaultRisk = formatDate(addDays(due, 30));
+        const defaultReport = formatDate(addDays(due, 60));
+        const defaultClaim = formatDate(addMonths(addDays(due, 60), 4));
+
+        const rejectHappensFirst = new Date(eta) <= new Date(defaultRisk);
+        const etaVsDue = daysBetweenStr(due, eta);
+        const etaVsDefault = daysBetweenStr(defaultRisk, eta);
+
+        let warn = '';
+        if (new Date(copy) < new Date(ship)) warn += '⚠️ 发送提单副本之日早于装船日，请核实日期。<br>';
+        if (oaFromShip <= 0) warn += '⚠️ 应付款日不晚于装船日，自装船日起算的实际账期不足 1 天，请核实。<br>';
+
+        const kv = '<div class="bl-kv">'
+            + '<span>应付款日（副本日＋' + days + ' 天）：<b>' + due + '</b></span>'
+            + '<span>拖欠风险成立日（应付款日＋30 天）：<b>' + defaultRisk + '</b></span>'
+            + '<span>自装船日起算实际账期：<b>' + oaFromShip + ' 天</b></span>'
+            + '<span>到港日 vs 应付款日：<b>' + (etaVsDue >= 0 ? '晚 ' + etaVsDue + ' 天' : '早 ' + Math.abs(etaVsDue) + ' 天') + '</b></span>'
+            + '<span>到港日 vs 拖欠成立日：<b>' + (etaVsDefault >= 0 ? '晚 ' + etaVsDefault + ' 天' : '早 ' + Math.abs(etaVsDefault) + ' 天') + '</b></span>'
+            + '</div>';
+
+        const conclusion = rejectHappensFirst
+            ? '<div class="bl-conclusion reject">🚢 判定结果：<strong>按拒收风险</strong>。到港日 ' + eta + ' 早于/等于拖欠成立日 ' + defaultRisk + ' —— 两个风险时点中<strong>到港在先</strong>。货物到港时买方仍未付款赎正本提单，即按<strong>拒收（拒绝接收货物）</strong>口径：风险发生日＝实际到港日 <u>' + rejectRisk + '</u>，须在 <strong>' + rejectReport + '</strong> 前完成报损（到港日＋10 个工作日），并在 <strong>' + rejectClaim + '</strong> 前提交索赔申请（报损后 4 个月）。</div>'
+            : '<div class="bl-conclusion default">🚢 判定结果：<strong>按拖欠风险</strong>。到港日 ' + eta + ' 晚于拖欠成立日 ' + defaultRisk + ' —— 两个风险时点中<strong>拖欠成立在先</strong>。应付款日＋30 天买方仍未付款，拖欠风险已于 ' + defaultRisk + ' 成立，须在 <strong>' + defaultReport + '</strong> 前完成报损（应付款日＋60 天），并在 <strong>' + defaultClaim + '</strong> 前提交索赔申请。</div>';
+
+        const pathReject = '<div class="bl-path ' + (rejectHappensFirst ? 'active' : 'muted') + '">'
+            + '<h5>路径 A｜拒收风险（到港在先，买方未付款赎单）' + (rejectHappensFirst ? '　✅ 本案适用' : '') + '</h5>'
+            + '风险发生日＝实际到港日 <span class="bl-date">' + rejectRisk + '</span>　→　报损截止＝到港日＋10 个工作日 <span class="bl-date">' + rejectReport + '</span>　→　索赔截止＝报损后 4 个月 <span class="bl-date">' + rejectClaim + '</span>'
+            + '<br><span class="bl-small">依据条款第八条：拖欠以外的其他风险（含拒绝接收货物），自知道或应当知道风险发生之日起 10 个工作日内提交《可能损失通知书》；第十条：报损后 4 个月内提交《索赔申请书》。</span></div>';
+
+        const pathDefault = '<div class="bl-path ' + (rejectHappensFirst ? 'muted' : 'active') + '">'
+            + '<h5>路径 B｜拖欠风险（应付款日＋30 天仍未付款）' + (rejectHappensFirst ? '' : '　✅ 本案适用') + '</h5>'
+            + '风险成立日＝应付款日＋30 天 <span class="bl-date">' + defaultRisk + '</span>　→　报损截止＝风险成立日＋30 日 <span class="bl-date">' + defaultReport + '</span>　→　索赔截止＝报损后 4 个月 <span class="bl-date">' + defaultClaim + '</span>'
+            + '<br><span class="bl-small">依据条款第八条、第十条、第三十一条：超过应付款日 30 日未付即构成“拖欠”，自风险发生之日起 30 日内报损，报损后 4 个月内索赔。</span></div>';
+
+        const earliestReport = new Date(rejectReport) <= new Date(defaultReport) ? rejectReport : defaultReport;
+        const earliestClaim = new Date(rejectClaim) <= new Date(defaultClaim) ? rejectClaim : defaultClaim;
+        const extra = '<div class="bl-extra">'
+            + '<strong>实操提醒：</strong><br>'
+            + '① 判定原则：比较“到港日”和“应付款日＋30 天”，<strong>哪个先到就按哪个风险算</strong>；上表已按此自动判断。<br>'
+            + '② 两条路径中最早的报损日为 <span class="bl-date">' + earliestReport + '</span>、最早的索赔截止日为 <span class="bl-date">' + earliestClaim + '</span>，建议按最早日倒排、提前提交。<br>'
+            + '③ 若买方在应付款日前已付清并赎单，则上述风险均不成立；若到港时买方明确拒收、拒付，即使拖欠已成立，也可能按拒收口径从到港日起算 —— 以实际情形和理赔人员认定为准。<br>'
+            + '④ 账期口径：自装船日起算的实际账期为 ' + oaFromShip + ' 天，批复的信用期限必须覆盖该天数；超出批复账期的部分不在保险责任内。<br>'
+            + '⑤ 逾期报损或索赔，保险人有权降低赔偿比例；拖欠风险逾期 6 个月仍未报损可拒赔（事先经保险人书面同意的除外）。'
+            + '</div>';
+
+        box.innerHTML = '<div style="margin-top:4px;">' + warn + '</div>' + kv + conclusion + pathReject + pathDefault + extra;
+    }
+
     function calculate() {
         const code = document.getElementById('countryCode').value;
         const country = countryData.find(c => c.code === code);
@@ -1678,3 +1825,4 @@
 
 </body>
 </html>
+<!-- （注：内容由AI生成） -->
